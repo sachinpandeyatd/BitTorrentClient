@@ -1,5 +1,6 @@
 package com.main;
 
+import java.io.IOException;
 import java.util.Scanner;
 
 public class MainClass {
@@ -7,6 +8,7 @@ public class MainClass {
 		System.out.println("What are you having - \n1) Maganet Link \n2) Torrent File \nJust enter the number");
 		Scanner scanner = new Scanner(System.in);
 		int inputType = scanner.nextInt();
+		scanner.close();
 		
 		TorrentParser torrentParser = new TorrentParser();
 		switch (inputType) {
@@ -15,7 +17,12 @@ public class MainClass {
 			break;
 
 		case 2:
-			torrentParser.parseTorrentFile();
+			try {
+				torrentParser.parseTorrentFile();
+			} catch (IOException e) {
+				System.out.println("An exception occured - " + e.getMessage());
+				e.printStackTrace();
+			}
 			break;
 		}
 	}
