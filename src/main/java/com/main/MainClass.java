@@ -8,8 +8,8 @@ public class MainClass {
 		System.out.println("What are you having - \n1) Maganet Link \n2) Torrent File \nJust enter the number");
 		Scanner scanner = new Scanner(System.in);
 		int inputType = scanner.nextInt();
-		scanner.close();
-		
+		scanner.reset();
+
 		TorrentParser torrentParser = new TorrentParser();
 		switch (inputType) {
 		case 1:

@@ -8,12 +8,10 @@ import java.util.Scanner;
 public class TorrentParser {
 
 	public void parseMaganetLink() {
-		System.out.println("Please enter your maganet link");
+		System.out.print("Please enter your maganet link - ");
 		Scanner scanner = new Scanner(System.in);
 		String maganetURL = scanner.next();
 		scanner.close();
-		
-		
 	}
 
 	public void parseTorrentFile() throws IOException {
