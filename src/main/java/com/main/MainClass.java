@@ -11,16 +11,18 @@ public class MainClass {
 		System.out.println("What are you having - \n1) Maganet Link \n2) Torrent File \nJust enter the number");
 		Scanner scanner = new Scanner(System.in);
 		int inputType = scanner.nextInt();
+		String magnetURL1 = scanner.nextLine();
 
 		TorrentParser torrentParser = new TorrentParser();
 		switch (inputType) {
-		case 1:
+			case 1:
 			System.out.print("Please enter your magnet link - ");
 			String magnetURL = scanner.nextLine();
 			scanner.close();
 
             try {
                 Map<String, String> params = torrentParser.parseMagnetLink(magnetURL);
+				System.out.println(params);
             } catch (URISyntaxException | UnsupportedEncodingException e) {
                 throw new RuntimeException(e);
             }
