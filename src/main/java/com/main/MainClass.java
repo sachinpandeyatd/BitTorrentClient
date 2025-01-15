@@ -45,7 +45,12 @@ public class MainClass {
 
 		TrackerCommunication trackerCommunication = new TrackerCommunication();
         try {
-            trackerCommunication.connectToTrackers(params);
+            String trackerResponse = trackerCommunication.connectToTrackers(params);
+
+			if(trackerResponse != null){
+				PeerHandshake peerHandshake = new PeerHandshake();
+
+			}
         } catch (IOException | InterruptedException | NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
