@@ -3,17 +3,20 @@ package com.main;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
+import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
 public class MainClass {
 	public static void main(String[] args) {
-		System.out.println("What are you having - \n1) Maganet Link \n2) Torrent File \nJust enter the number");
+		System.out.println("What are you having - \n1) Magnet Link \n2) Torrent File \nJust enter the number");
 		Scanner scanner = new Scanner(System.in);
 		int inputType = scanner.nextInt();
-		String magnetURL1 = scanner.nextLine();
+		scanner.nextLine();
 
 		TorrentParser torrentParser = new TorrentParser();
+		Map<String, String> params = new HashMap<>();
 		switch (inputType) {
 			case 1:
 			System.out.print("Please enter your magnet link - ");
@@ -21,7 +24,7 @@ public class MainClass {
 			scanner.close();
 
             try {
-                Map<String, String> params = torrentParser.parseMagnetLink(magnetURL);
+                params = torrentParser.parseMagnetLink(magnetURL);
 				System.out.println(params);
             } catch (URISyntaxException | UnsupportedEncodingException e) {
                 throw new RuntimeException(e);
@@ -33,11 +36,18 @@ public class MainClass {
 			String torrFileLocation = scanner.nextLine();
 			scanner.close();
 			try {
-				torrentParser.parseTorrentFile(torrFileLocation);
+				params = torrentParser.parseTorrentFile(torrFileLocation);
 			} catch (IOException e) {
-				System.out.println("An exception occured - " + e.getMessage());
+				System.out.println("An exception occurred - " + e.getMessage());
 			}
 			break;
 		}
-	}
+
+		TrackerCommunication trackerCommunication = new TrackerCommunication();
+        try {
+            trackerCommunication.connectToTrackers(params);
+        } catch (IOException | InterruptedException | NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
