@@ -46,10 +46,10 @@ public class MainClass {
 		TrackerCommunication trackerCommunication = new TrackerCommunication();
         try {
             String trackerResponse = trackerCommunication.connectToTrackers(params);
-
+			System.out.println("jdksjdkjsdjk    " + trackerResponse);
 			if(trackerResponse != null){
 				PeerHandshake peerHandshake = new PeerHandshake();
-
+				peerHandshake.extractPeersFromResponse(trackerResponse);
 			}
         } catch (IOException | InterruptedException | NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
