@@ -6,6 +6,7 @@ import java.net.URISyntaxException;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
 import java.util.Scanner;
 
 public class MainClass {
@@ -49,7 +50,15 @@ public class MainClass {
 			System.out.println("jdksjdkjsdjk    " + trackerResponse);
 			if(trackerResponse != null){
 				PeerHandshake peerHandshake = new PeerHandshake();
-				peerHandshake.extractPeersFromResponse(trackerResponse);
+				byte[] peerData = peerHandshake.extractPeersFromResponse(trackerResponse);
+
+				if(peerData != null){
+					List<Peer> peers = peerHandshake.parsePeersData(peerData);
+
+					for (Peer peer : peers) {
+						System.out.println(peer);  // Will print IP:Port for each peer
+					}
+				}
 			}
         } catch (IOException | InterruptedException | NoSuchAlgorithmException e) {
             throw new RuntimeException(e);

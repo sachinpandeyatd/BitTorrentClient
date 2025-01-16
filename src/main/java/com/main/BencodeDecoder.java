@@ -2,9 +2,7 @@ package com.main;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 
 public class BencodeDecoder {
@@ -49,12 +47,13 @@ public class BencodeDecoder {
         while (position < data.length && data[position] != ':') {
             position++;
         }
-
+        System.out.println("start position -- " + start + " " + position);
         if(position >= data.length){
             throw new IOException("Unexpected end of string length");
         }
 
         String lengthStr = new String(data, start, position - start, StandardCharsets.UTF_8);
+        System.out.println("length str --- " + lengthStr);
         int length = Integer.parseInt(lengthStr);
         position++;
 
@@ -63,30 +62,59 @@ public class BencodeDecoder {
         byte[] result = Arrays.copyOfRange(data, position, position + length);
         position += length;
 
-        System.out.println("hdsdhsjd   " + Arrays.toString(result));
+        System.out.println("result--- " + Arrays.toString(result));
         return result;
     }
 
-    private Object decodeInteger() {
-        return null;
+    private Long decodeInteger() throws IOException {
+        position++;
+
+        int start = position;
+
+        while (position < data.length && data[position] != 'e') {
+            position++;
+        }
+
+        if (position >= data.length) {
+            throw new IOException("Unexpected end of integer");
+        }
+
+        String number = new String(data, start, position - start, StandardCharsets.UTF_8);
+        position++;
+
+        return Long.parseLong(number);
     }
 
-    private Object decodeList() {
-        return null;
+    private List<Object> decodeList() throws IOException {
+        position++;
+        List<Object> list = new ArrayList<>();
+
+        while (position < data.length && data[position] != 'e') {
+            list.add(decode());
+        }
+
+        if (position >= data.length) {
+            throw new IOException("Unexpected end of list");
+        }
+
+        position++;
+
+        return list;
     }
 
     private Map<String, Object> decodeDictionary() throws IOException {
-        System.out.println("jkdskdjskjk");
         position += 1; //skip first char i.e. 'd' in this case
         Map<String, Object> decodedData = new HashMap<>();
 
         while(position < data.length && data[position] != 'e'){
+            System.out.println("data[position] -- " + data[position] + " " + position);
             String key = new String(decodeString(), StandardCharsets.UTF_8);
             Object value = decode();
+            System.out.println("key --- " + key + " " + value);
             decodedData.put(key, value);
         }
 
-        System.out.println("jkdskjdsk   " + decodedData);
+        System.out.println("decodedData ----  " + decodedData);
         if(position > data.length) throw new IOException("Unexpected end of dictionary");
 
         position += 1;
