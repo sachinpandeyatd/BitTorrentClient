@@ -47,16 +47,16 @@ public class MainClass {
 		TrackerCommunication trackerCommunication = new TrackerCommunication();
         try {
             String trackerResponse = trackerCommunication.connectToTrackers(params);
-			System.out.println("jdksjdkjsdjk    " + trackerResponse);
+			System.out.println("Tracker Response ----  " + trackerResponse);
 			if(trackerResponse != null){
-				PeerHandshake peerHandshake = new PeerHandshake();
-				byte[] peerData = peerHandshake.extractPeersFromResponse(trackerResponse);
+				ExtractPeerData extractPeerData = new ExtractPeerData();
+				byte[] peerData = extractPeerData.extractPeersFromResponse(trackerResponse);
 
 				if(peerData != null){
-					List<Peer> peers = peerHandshake.parsePeersData(peerData);
+					List<Peer> peers = extractPeerData.parsePeersData(peerData);
 
-					for (Peer peer : peers) {
-						System.out.println(peer);  // Will print IP:Port for each peer
+					if(peers != null){
+
 					}
 				}
 			}
