@@ -7,6 +7,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -14,10 +15,11 @@ import java.util.stream.Collectors;
 
 public class TrackerCommunication {
 
-    public String connectToTrackers(Map<String, String> params) throws IOException, InterruptedException, NoSuchAlgorithmException {
+    public List<TorrentData> connectToTrackers(Map<String, String> params) throws IOException, InterruptedException, NoSuchAlgorithmException {
+        List<TorrentData> torrentDataList = new ArrayList<>();
         String response = null;
         MessageDigest md = MessageDigest.getInstance("SHA1");
-        String infoHash = urlencode(md.digest(params.get("xt").split(":")[2].getBytes()));
+        String infoHash = urlEncode(md.digest(params.get("xt").split(":")[2].getBytes()));
         List<String> trackerList = params.entrySet().stream()
                 .filter(entry -> entry.getKey().startsWith("t"))
                 .map(Map.Entry::getValue)
@@ -37,8 +39,11 @@ public class TrackerCommunication {
                 HttpResponse<String> trackerResponse = httpClient.send(trackerRequest, HttpResponse.BodyHandlers.ofString());
                 response = trackerResponse.body();
             }
+
+            TorrentData torrentData = new TorrentData(peerId, tracker, infoHash, response, torrentStats);
+            torrentDataList.add(torrentData);
         }
-        return response;
+        return torrentDataList;
     }
 
     private static String generatePeerId() {
@@ -54,7 +59,7 @@ public class TrackerCommunication {
         return sb.toString();
     }
 
-    private String urlencode(byte[] bs) {
+    private String urlEncode(byte[] bs) {
         StringBuffer sb = new StringBuffer(bs.length * 3);
         for (byte b : bs) {
             int c = b & 0xFF;

@@ -46,17 +46,33 @@ public class MainClass {
 
 		TrackerCommunication trackerCommunication = new TrackerCommunication();
         try {
-            String trackerResponse = trackerCommunication.connectToTrackers(params);
-			System.out.println("Tracker Response ----  " + trackerResponse);
-			if(trackerResponse != null){
-				ExtractPeerData extractPeerData = new ExtractPeerData();
-				byte[] peerData = extractPeerData.extractPeersFromResponse(trackerResponse);
+            List<TorrentData> torrentDataList = trackerCommunication.connectToTrackers(params);
+			System.out.println("Tracker Response ----  " + torrentDataList);
+			if(torrentDataList != null){
+				for(TorrentData torrentData : torrentDataList){
 
-				if(peerData != null){
-					List<Peer> peers = extractPeerData.parsePeersData(peerData);
+					ExtractPeerData extractPeerData = new ExtractPeerData();
+					byte[] peerData = extractPeerData.extractPeersFromResponse(torrentData.getTrackerResponse());
 
-					if(peers != null){
+					if(peerData != null){
+						List<Peer> peers = extractPeerData.parsePeersData(peerData);
 
+						if(peers != null){
+
+							for(Peer peer : peers){
+								PeerConnection peerConnection = new PeerConnection(peer, torrentData.getInfoHash(), torrentData.getPeerId());
+								peerConnection.performHandshake();
+								peerConnection.enableMetaDataExtension();
+								long totalSize = peerConnection.requestMetadata();
+
+								torrentData.getTorrentStats().setLeft(totalSize);
+
+								System.out.println("torrentData --- " + torrentData.toString());
+								System.out.println("torrentStats --- " + torrentData.getTorrentStats().toString());
+
+								peerConnection.close();
+							}
+						}
 					}
 				}
 			}

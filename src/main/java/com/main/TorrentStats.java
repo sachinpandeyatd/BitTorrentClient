@@ -29,4 +29,13 @@ public class TorrentStats {
                 left < 0 ? 0 : left  // Use 0 if size unknown
         );
     }
+
+    @Override
+    public String toString() {
+        return "TorrentStats{" +
+                "uploaded=" + uploaded +
+                ", downloaded=" + downloaded +
+                ", left=" + left +
+                '}';
+    }
 }
